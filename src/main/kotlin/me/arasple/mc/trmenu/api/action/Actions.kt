@@ -62,6 +62,9 @@ object Actions {
         ActionPointsSet.registery,
         ActionPointsAdd.registery,
         ActionPointsTake.registery,
+        ActionOptEcoSet.registery,
+        ActionOptEcoAdd.registery,
+        ActionOptEcoTake.registery,
         ActionTakeItem.registery,
         ActionGiveItem.registery,
         // Advanced

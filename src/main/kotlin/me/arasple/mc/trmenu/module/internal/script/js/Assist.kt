@@ -219,6 +219,14 @@ class Assist {
         return HookPlugin.getPlayerPoints().hasPoints(player, points)
     }
 
+    fun hasOptEco(player: Player, points: String): Boolean {
+        return hasOptEco(player, toInt(points))
+    }
+
+    fun hasOptEco(player: Player, points: Int): Boolean {
+        return HookPlugin.getOptEco().hasPoints(player, points)
+    }
+
     fun getHead(name: String): ItemStack {
         return Heads.getHead(name)
     }
