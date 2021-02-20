@@ -55,7 +55,7 @@ class ItemMatcher(private val matcher: Set<Match>) {
     }
 
     fun hasItem(player: Player): Boolean {
-        Performance.MIRROR.check("Function:checkItem") {
+        Performance.MIRROR.check("Function:ItemMatcherCheck") {
             return matcher.all {
                 Items.hasItem(player.inventory, it.itemsMatcher, it.amount)
             }
@@ -71,11 +71,11 @@ class ItemMatcher(private val matcher: Set<Match>) {
 
     fun buildItem(): List<ItemStack> {
         return matcher.map {
-            val itemBuilder = ItemBuilder(Material.GRASS_BLOCK).amount(it.amount)
+            val itemBuilder = ItemBuilder(Material.BEDROCK).amount(it.amount)
 
             it.traits.forEach { (trait, value) ->
                 when (trait) {
-                    MATERIAL -> itemBuilder.material(value)
+                    MATERIAL -> itemBuilder.material(value.toUpperCase())
                     DATA -> itemBuilder.damage(value.toIntOrNull() ?: 0)
                     MODEL_DATA -> itemBuilder.customModelData(value.toIntOrNull() ?: 0)
                     NAME -> itemBuilder.name(value)
@@ -113,7 +113,7 @@ class ItemMatcher(private val matcher: Set<Match>) {
             val name = getTrait(NAME)
             val nameMatch = name == null || itemStack.itemMeta?.displayName?.contains(name, true) == true
 
-            val lore = getTrait(NAME)
+            val lore = getTrait(LORE)
             val loreMatch = lore == null || itemStack.itemMeta?.lore?.any { it.contains(lore, true) } ?: false
 
             val head = getTrait(HEAD)

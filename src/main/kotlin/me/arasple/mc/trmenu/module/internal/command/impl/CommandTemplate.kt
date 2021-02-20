@@ -25,7 +25,6 @@ import org.bukkit.inventory.ItemStack
  * @author Arasple
  * @date 2020/7/22 12:08
  */
-@Deprecated("TO BE IMPROVED")
 class CommandTemplate : BaseSubCommand() {
 
     override fun getArguments(): Array<Argument> {
@@ -47,7 +46,7 @@ class CommandTemplate : BaseSubCommand() {
             .close { e ->
                 val inventory = e.inventory
 
-                if (inventory.isEmpty) {
+                if (inventory.all { Items.isNull(it) }) {
                     TLocale.sendTo(player, "Command.Template.Empty")
                     return@close
                 }

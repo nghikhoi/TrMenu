@@ -40,7 +40,7 @@ class Texture(
             TextureType.HEAD -> Heads.getHead(temp)
             TextureType.REPO -> ItemRepository.getItem(temp)
             TextureType.SOURCE -> ItemSource.fromSource(session, texture)
-            TextureType.RAW -> Items.fromJson(temp)
+            TextureType.RAW -> ItemHelper.fromJson(temp)
         }
 
         if (itemStack != null) {
@@ -83,7 +83,8 @@ class Texture(
                     } else ""
 
                 return if (hdb != null) "source:HDB:$hdb"
-                else "head:Heads.seekTexture(itemStack)"
+                else if (itemMeta.hasOwner()) "head:${itemMeta.owningPlayer?.name}"
+                else "head:${Heads.seekTexture(itemStack)}"
             }
             // Model Data
             if (Version.isAfter(Version.v1_14) && itemMeta != null && itemMeta.hasCustomModelData()) {
@@ -124,7 +125,7 @@ class Texture(
             val dynamic = Regexs.containsPlaceholder(texture)
             if (type == TextureType.NORMAL) {
                 if (texture.startsWith("{")) {
-                    val json = ItemHelper.asJsonItem(texture)
+                    val json = ItemHelper.fromJson(texture)
                     if (!Items.isNull(json)) {
                         type = TextureType.RAW
                         if (!dynamic) static = json!!
@@ -145,20 +146,18 @@ class Texture(
                 builder.damage(data)
             } else {
                 val name = id.toString()
-                val xMaterial =
-                    XMaterial.values().find { it.name.equals(name, true) }
-                        ?: XMaterial.values()
-                            .find { it -> it.legacy.any { it == name } }
-                        ?: XMaterial.values()
-                            .maxByOrNull { Strings.similarDegree(name, it.name) }
-
-                if (xMaterial != null) {
-                    return xMaterial.parseItem() ?: FALL_BACK
-                } else {
+                try {
                     builder.material(Material.valueOf(name))
+                } catch (e: Throwable) {
+                    val xMaterial =
+                        XMaterial.values().find { it.name.equals(name, true) }
+                            ?: XMaterial.values()
+                                .find { it -> it.legacy.any { it == name } }
+                            ?: XMaterial.values()
+                                .maxByOrNull { Strings.similarDegree(name, it.name) }
+                    return xMaterial?.parseItem() ?: FALL_BACK
                 }
             }
-
             return builder.build()
         }
 

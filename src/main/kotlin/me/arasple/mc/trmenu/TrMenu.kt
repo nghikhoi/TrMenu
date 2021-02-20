@@ -1,11 +1,11 @@
 package me.arasple.mc.trmenu
 
-import io.izzel.taboolib.kotlin.kether.action.ActionRandom
 import io.izzel.taboolib.loader.Plugin
 import io.izzel.taboolib.module.config.TConfig
 import io.izzel.taboolib.module.inject.TInject
 import io.izzel.taboolib.module.locale.TLocale
 import me.arasple.mc.trmenu.module.conf.Loader
+import me.arasple.mc.trmenu.module.display.MenuSession
 import me.arasple.mc.trmenu.module.display.MenuSettings
 import me.arasple.mc.trmenu.module.internal.service.RegisterCommands
 import me.arasple.mc.trmenu.module.internal.service.Shortcuts
@@ -29,6 +29,17 @@ object TrMenu : Plugin() {
         SETTINGS.listener { onSettingsReload() }.also { onSettingsReload() }
         TLocale.sendToConsole("Plugin.Enabled", plugin.description.version)
         Loader.loadMenus()
+    }
+
+    override fun onDisable() {
+        MenuSession.SESSIONS.let {
+            it.values.forEach { it.close(closePacket = true, updateInventory = true) }
+            it.clear()
+        }
+    }
+
+    override fun allowHotswap(): Boolean {
+        return false
     }
 
     fun onSettingsReload() {

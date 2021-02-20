@@ -23,9 +23,9 @@ import org.bukkit.metadata.FixedMetadataValue
  */
 object Metadata {
 
-    private val meta = mutableMapOf<String, DataMap>()
-    private val data = mutableMapOf<String, DataMap>()
-    val globalData = TConfig.create(TrMenu.plugin, "data/globalData.yml")
+    internal val meta = mutableMapOf<String, DataMap>()
+    internal val data = mutableMapOf<String, DataMap>()
+    internal val globalData = TConfig.create(TrMenu.plugin, "data/globalData.yml")
 
     @TSchedule(delay = 100, period = 20 * 30, async = true)
     @TFunction.Cancel
@@ -60,8 +60,8 @@ object Metadata {
         player.setMetadata(key, FixedMetadataValue(TrMenu.plugin, value))
     }
 
-    fun lookBukkitMeta(player: Player, key: String, value: String = ""): Boolean {
-       return player.hasMetadata(key).also {
+    fun byBukkit(player: Player, key: String): Boolean {
+        return player.hasMetadata(key).also {
             if (it) player.removeMetadata(key, TrMenu.plugin)
         }
     }
